@@ -2,6 +2,7 @@
 #include <iostream>
 #ifndef BST_H
 #define BST_H
+#include <vector>
 
 template<class Item>
 class bstNode
@@ -58,7 +59,7 @@ void bstNode<Item>::insert(Item& targetData)
     
     // smaller data on the left, greater or equal data on the right
     bstNode** target_ptr;
-    if (targetData < data_field) {
+    if (targetData <= data_field) {
         target_ptr = &left_field;
     } else {
         target_ptr = &right_field;
@@ -89,25 +90,21 @@ template<class Item>
 void bstNode<Item>::remove(Item& targetData, bstNode* parent)
 {
     //go through and remove the item and remake the tree
-    using namespace std;
-    bool debug = true;
 
     // have we found the data?
     if (data_field == targetData) {
-        if (debug) cout << "found the data!" << endl;
  
         // if so, determine how to delete
      
         if (left_field == NULL && right_field == NULL) {
-            if (debug) cout << "no children found!" << endl;
             // if no children, remove the link in the parent node
             if (parent != NULL ) {
                 if (parent->left_field == this) { parent->left_field = NULL; }
                 else if (parent->right_field == this) { parent->right_field = NULL; }
             }
+            // if no parent node ... ???
         
         } else if (left_field != NULL && right_field != NULL) {
-            if (debug) cout << "two children found!" << endl;
             // if two children, find the left-most descendant of the right child
             // and swap its value with this one, then remove that descendant
             bstNode* current_node = right_field;
@@ -121,27 +118,33 @@ void bstNode<Item>::remove(Item& targetData, bstNode* parent)
      
         } else {
             // if one child, make the parent point to the child
-            if (debug) cout << "one children found!" << endl;
+            bstNode* target;
+            if (left_field != NULL) { target = left_field; }
+            else if (right_field != NULL) { target = right_field; }
+
             if (parent != NULL ) {
                 // find our single child
-                bstNode* target;
-                if (left_field != NULL) { target = left_field; }
-                else if (right_field != NULL) { target = right_field; }
                 // make the parent point to the child instead of us
                 if (parent->left_field == this) { parent->left_field = target; }
                 else if (parent->right_field == this) { parent->right_field = target; }
-            } 
+            } else {
+                // if no parent, fall back to copying all of the data fields
+                this->data_field = target->data_field;
+                this->left_field = target->left_field;
+                this->right_field = target->right_field;
+            }
         }
 
         // finally, call the destructor on this node
+        // this.~bstNode();
         
-    } else {
-        // if not, check the left child if it exists
-        if (left_field != NULL) left_field->remove(targetData, this);
-     
-        // and the right child if it exists
-        if (right_field != NULL) right_field->remove(targetData, this);
-    }
+    // if not, check the left child if it exists
+    } 
+    else if (targetData <= data_field && left_field != NULL) { left_field->remove(targetData, this); }
+        
+    // and the right child if it exists
+    else if (targetData > data_field && right_field != NULL) { right_field->remove(targetData, this); }
+    
 }
 
 template<class Item>
@@ -157,11 +160,24 @@ int bstNode<Item>::size()
 template<class Item>
 void bstNode<Item>::print() {
     using namespace std;
-    cout << "/";
-    if (left_field != NULL) left_field->print();
-    cout << " | " << data_field << " | ";
-    if (right_field != NULL) right_field->print();
-    cout << "\\";
+    int row = 0;
+    vector<bstNode*> this_row;
+    vector<bstNode*> next_row;
+    this_row.push_back(this);
+    while ( !this_row.empty() ) {
+        cout << "R" << row << endl;
+        while ( !this_row.empty() ) {
+            bstNode* cur = this_row.front();
+            cout << cur->data_field << endl;
+            if (cur->left_field != NULL) next_row.push_back(cur->left_field);
+            if (cur->right_field != NULL) next_row.push_back(cur->right_field);
+            this_row.erase(this_row.begin());
+        }
+        this_row = next_row;
+        next_row.clear();
+        row ++;
+        cout << "---------" << endl;
+    }
 }
 
 #endif

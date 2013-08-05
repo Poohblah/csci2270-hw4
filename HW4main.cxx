@@ -25,6 +25,7 @@ int main()
         {
             //I gave case i, case f, case t as an example of how we do stuff in main
             case 'i':
+                cout << "*** i " << data << " ***" << endl;
                 if (root==NULL) //ALWAYS check the NULL case before dereferencing
                     root=new bstNode<int>(data);
                 else
@@ -33,13 +34,17 @@ int main()
                 cout << endl;
                 break;
             case 'r':
-            //fill this in
-                if (root != NULL) root->remove(data);
-                root->print();
+                //fill this in
+                cout << "*** r " << data << " ***" << endl;
+                if (root != NULL) {
+                    // I shouldn't have this logic here, but there's nowhere else to put it
+                    if (root->size() == 1) { root->remove(data); root = NULL; } 
+                    else { root->remove(data); root->print();}
+                } 
                 cout << endl;
                 break;
             case 'f':
-                cout<<"***f "<<data<<"***"<<endl;
+                cout<<"*** f "<<data<<" ***"<<endl;
                 if(root->find(data))
                 {
                     cout<<"found!"<<endl;
@@ -50,17 +55,22 @@ int main()
                 }
                 break;
             case 's':
-            //fill this in
+                //fill this in
+                cout << "*** s ***" << endl;
                 root == NULL ? cout << 0 : cout << root->size() ;
                 cout << endl;
                 break;
             case 't':
+                cout << "*** t ***" << endl;
                 if(root!=NULL)
                     root->traverse();
                 cout << endl;
                 break;
             case 'q':
                 return 0;
+                break;
+            default:
+                cout << "Please provide valid input.\n\n";
                 break;
         }
     }
