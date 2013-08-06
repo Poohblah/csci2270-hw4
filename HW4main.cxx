@@ -31,7 +31,6 @@ int main()
                 else
                     root->insert(data);
                 root->print();
-                cout << endl;
                 break;
             case 'r':
                 //fill this in
@@ -41,7 +40,6 @@ int main()
                     if (root->size() == 1) { root->remove(data); root = NULL; } 
                     else { root->remove(data); root->print();}
                 } 
-                cout << endl;
                 break;
             case 'f':
                 cout<<"*** f "<<data<<" ***"<<endl;
