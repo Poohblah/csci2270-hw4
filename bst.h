@@ -9,11 +9,12 @@ class bstNode
 {
     public:
     //constructor
-    bstNode(const Item& init_data, bstNode* init_left=NULL, bstNode* init_right=NULL)
+    bstNode(const Item& init_data, bstNode* init_parent=NULL, bstNode* init_left=NULL, bstNode* init_right=NULL)
         {
             data_field = init_data;
             left_field = init_left;
             right_field = init_right;
+            parent = init_parent;
         }
     //helper functions if you need them ..
     //I think I haven't used any of them so far    
@@ -27,7 +28,7 @@ class bstNode
     //FUNCTIONS YOU IMPLEMENT BELOW
     bool find(Item& targetData);
     void insert(Item& targetData);
-    void remove(Item& targetData, bstNode* parent = NULL);
+    void remove(Item& targetData);
     int size();
     void traverse();
     
@@ -36,6 +37,7 @@ class bstNode
         Item data_field; //our data
         bstNode* left_field; //pointer to left child
         bstNode* right_field; //pointer to right child
+        bstNode* parent;
 };
 
 //ALL OUR IMPLEMENTATIONS GO IN HERE-- NO .CPP FILE FOR BSTNODE BECUASE IT'S A TEMPLATE CLASS
@@ -66,7 +68,7 @@ void bstNode<Item>::insert(Item& targetData)
     }
 
     if (*target_ptr == NULL) {
-        *target_ptr = new bstNode(targetData);
+        *target_ptr = new bstNode(targetData, this);
     } else {
         (*target_ptr)->insert(targetData);
     }
@@ -87,7 +89,7 @@ void bstNode<Item>::traverse()
 }
 
 template<class Item>
-void bstNode<Item>::remove(Item& targetData, bstNode* parent)
+void bstNode<Item>::remove(Item& targetData)
 {
     //go through and remove the item and remake the tree
 
@@ -114,25 +116,20 @@ void bstNode<Item>::remove(Item& targetData, bstNode* parent)
             }
             Item target_data = current_node->data_field;
             data_field = target_data;
-            right_field->remove(target_data, this);
+            //right_field->remove(target_data);
+            current_node->remove(target_data);
      
         } else {
-            // if one child, make the parent point to the child
+            // if one child, essentially replace this node with child node
             bstNode* target;
             if (left_field != NULL) { target = left_field; }
             else if (right_field != NULL) { target = right_field; }
 
-            if (parent != NULL ) {
-                // find our single child
-                // make the parent point to the child instead of us
-                if (parent->left_field == this) { parent->left_field = target; }
-                else if (parent->right_field == this) { parent->right_field = target; }
-            } else {
-                // if no parent, fall back to copying all of the data fields
-                this->data_field = target->data_field;
-                this->left_field = target->left_field;
-                this->right_field = target->right_field;
-            }
+            // retain parent field, but copy rest of data
+            this->data_field = target->data_field;
+            this->left_field = target->left_field;
+            this->right_field = target->right_field;
+            
         }
 
         // finally, call the destructor on this node
@@ -140,10 +137,10 @@ void bstNode<Item>::remove(Item& targetData, bstNode* parent)
         
     // if not, check the left child if it exists
     } 
-    else if (targetData <= data_field && left_field != NULL) { left_field->remove(targetData, this); }
+    else if (targetData <= data_field && left_field != NULL) { left_field->remove(targetData); }
         
     // and the right child if it exists
-    else if (targetData > data_field && right_field != NULL) { right_field->remove(targetData, this); }
+    else if (targetData > data_field && right_field != NULL) { right_field->remove(targetData); }
     
 }
 
