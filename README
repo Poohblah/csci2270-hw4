@@ -1,0 +1,8 @@
+Jay Hendren
+csci2270 su13 hw4
+
+binary search tree with interactive mini-shell
+
+Not much to say here. Compiles in various UNIX and Linux environments
+using GCC 4.x. Fulfills the requirements of the assignment. Leaks memory
+like there is no tomorrow.
