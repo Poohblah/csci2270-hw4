@@ -47,8 +47,8 @@ bool bstNode<Item>::find(Item& targetData)
 {
     //check my self, check my children... if I find targetData I return true, else false
     if (targetData == data_field) return true;
-    if (left_field != NULL) return left_field->find(targetData);
-    if (right_field != NULL) return right_field->find(targetData);
+    if (left_field != NULL && left_field->find(targetData)) return true;
+    if (right_field != NULL && right_field->find(targetData)) return true;
     return false;
 }
 
